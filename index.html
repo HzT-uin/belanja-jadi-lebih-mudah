@@ -1,0 +1,240 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Temukan Produk Pilihanmu!</title>
+  <style>
+    body {
+      font-family: 'Segoe UI', sans-serif;
+      margin: 0;
+      padding: 0;
+      background: linear-gradient(135deg, #f6d365 0%, #fda085 100%);
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+      color: #333;
+    }
+    .container {
+      background: white;
+      padding: 2rem;
+      border-radius: 20px;
+      box-shadow: 0 4px 20px rgba(0,0,0,0.2);
+      text-align: center;
+      max-width: 520px;
+      width: 100%;
+    }
+    h1 {
+      margin-bottom: 0.5rem;
+      font-size: 1.6rem;
+      color: #ff6f61;
+    }
+    p.instruksi {
+      font-size: 0.95rem;
+      margin-bottom: 1rem;
+      color: #555;
+    }
+    input {
+      padding: 0.7rem;
+      font-size: 1rem;
+      width: 70%;
+      border: 1px solid #ccc;
+      border-radius: 10px;
+      margin-bottom: 1rem;
+    }
+    button {
+      padding: 0.7rem 1.2rem;
+      background-color: #ff6f61;
+      color: white;
+      border: none;
+      border-radius: 10px;
+      cursor: pointer;
+      font-size: 1rem;
+    }
+    button:hover {
+      background-color: #ff3b2e;
+    }
+    ul {
+      list-style: none;
+      padding: 0;
+      margin-top: 1rem;
+    }
+    li {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 0.7rem;
+      border-bottom: 1px dashed #ddd;
+      padding-bottom: 0.3rem;
+    }
+    .info-produk {
+      flex-grow: 1;
+      text-align: left;
+    }
+    .info-produk a {
+      text-decoration: none;
+      color: #0077cc;
+      font-weight: bold;
+    }
+    .info-produk a:hover {
+      text-decoration: underline;
+    }
+    .badge {
+      padding: 4px 8px;
+      font-size: 0.75rem;
+      border-radius: 12px;
+      font-weight: bold;
+      color: white;
+      white-space: nowrap;
+    }
+    .badge-celana {
+      background-color: #3b82f6;
+    }
+    .badge-kemeja {
+      background-color: #ec4899;
+    }
+    .data-barang {
+      text-align: left;
+      margin-top: 2rem;
+    }
+    .data-barang h2 {
+      font-size: 1.2rem;
+      margin-bottom: 0.5rem;
+      color: #444;
+    }
+    .data-barang ul {
+      max-height: 160px;
+      overflow-y: auto;
+    }
+  </style>
+</head>
+<body>
+
+  <div class="container">
+    <h1>Temukan Produk Pilihanmu!</h1>
+    <p class="instruksi">Masukkan Nomor produk, lalu klik "Cari Produk", lalu klik nama produk untuk membukanya langsung di Shopee. Yuk cari yang cocok untukmu!</p>
+    <input type="text" id="angkaInput" placeholder="Masukkan nomor produk...">
+    <button onclick="cariBarang()">Cari Produk</button>
+    <ul id="hasilPencarian"></ul>
+
+    <div class="data-barang">
+      <h2>🌟 Koleksi Rekomendasi Spesial:</h2>
+      <ul id="daftarBarang"></ul>
+    </div>
+  </div>
+
+  <script>
+    const dataBarang = {
+      "1": { nama: "Celana Kerja Formal Kulot Wanita", link: "https://s.shopee.co.id/4AonJFF52S", kategori: "CELANA", badge: "badge-celana" },
+      "2": { nama: "AZURA Kemeja Wanita Korean", link: "https://s.shopee.co.id/7fOfV71HGW", kategori: "KEMEJA", badge: "badge-kemeja" },
+      "3": { nama: "Celana Kulot Semi Cutbray Wanita", link: "https://s.shopee.co.id/8fHDPLtrCE", kategori: "CELANA", badge: "badge-celana" },
+      "4": { nama: "Celana Hommy", link: "https://s.shopee.co.id/9ADU0iWbe4", kategori: "CELANA", badge: "badge-celana" },
+      "5": { nama: "Baju Batik Wanita Modren", link: "https://s.shopee.co.id/gEvtI3LHf", kategori: "KEMEJA", badge: "badge-kemeja" },
+      "6": { nama: "Baju Batik Kantor Wanita Lengan Panjang", link: "https://s.shopee.co.id/1LUcgs5nut", kategori: "KEMEJA", badge: "badge-kemeja" },
+      "7": { nama: "Kemeja Kinka Blouse", link: "https://s.shopee.co.id/3AwGsb38Yi", kategori: "KEMEJA", badge: "badge-kemeja" },
+      "8": { nama: "Korean Loose Maxi Skirt Rok Wanita Anti Kusut", link: "https://s.shopee.co.id/30cqgYMC6o", kategori: "ROK", badge: "badge-kemeja" },
+      "9": { nama: "Celana Kulot Cargo Wanita", link: "https://s.shopee.co.id/1Vo2u54Cfx", kategori: "CELANA", badge: "badge-celana" },
+      "10": { nama: "Rok Canada Tutu", link: "https://s.shopee.co.id/AA61EAS0BM", kategori: "ROK", badge: "badge-kemeja" },
+      "11": { nama: "Rok Wanita Korean Style Formal Casual", link: "https://s.shopee.co.id/9zmb2AGQMc", kategori: "ROK", badge: "badge-kemeja" },
+      "12": { nama: "Peony Skirt Ribbon Rok", link: "https://s.shopee.co.id/gEvvGc8Wn", kategori: "ROK", badge: "badge-kemeja" },
+      "13": { nama: "Jeket Jeans Wanita Hoodie", link: "https://s.shopee.co.id/1LUciyNksi", kategori: "JAKET", badge: "badge-kemeja" },
+      "14": { nama: "Jaket Pria Wanita Terbaru Waterproof", link: "https://s.shopee.co.id/4L8EIsFUl5", kategori: "JAKET", badge: "badge-kemeja" },
+      "15": { nama: "Jacket Pria Puffer Outdoor Gunung", link: "https://s.shopee.co.id/708zTz8Tkx", kategori: "JAKET", badge: "badge-kemeja" },
+      "16": { nama: "Tas Ransel Multi-Kompartemen", link: "https://s.shopee.co.id/30crlHILms", kategori: "TAS", badge: "badge-kemeja" },
+      "17": { nama: "Tas Selempang Wanita Pierre Loues", link: "https://s.shopee.co.id/5VKCkFubKf", kategori: "TAS", badge: "badge-kemeja" },
+      "18": { nama: "Rak Keranjang Jaring Tempel Dinding", link: "https://s.shopee.co.id/10rnOGFWLY", kategori: "RUMAH", badge: "badge-kemeja" },
+      "19": { nama: "Dispenser Stainless steel", link: "https://s.shopee.co.id/2qJRZt4l8e", kategori: "RUMAH", badge: "badge-kemeja" },
+      "20": { nama: "Sepatu Sneakers Remaja Wanita", link: "https://s.shopee.co.id/6KtJkVzzdJ", kategori: "SEPATU", badge: "badge-kemeja" },
+      "21": { nama: "Sweater Rajut Knit Lengan Balon Panjang", link: "https://s.shopee.co.id/7pi7XXa4xR", kategori: "SWEATER", badge: "badge-kemeja" },
+      "22": { nama: "Cardigan Rajut Sweater Wanita Korean", link: "https://s.shopee.co.id/5L0mZ8fiAP", kategori: "SWEATER", badge: "badge-kemeja" },
+      "23": { nama: "Sleeveless Kint Top Import Turtle Neck", link: "https://s.shopee.co.id/20kKbGdtX1", kategori: "SWEATER", badge: "badge-kemeja" },
+      "24": { nama: "Cardigan Rajut Kancing Gold Premium", link: "https://s.shopee.co.id/40VOzFX3sR", kategori: "SWEATER", badge: "badge-kemeja" },
+      "25": { nama: "Jersey Streetwear Number 33", link: "https://s.shopee.co.id/9pTBwHJKoU", kategori: "JERSEY", badge: "badge-kemeja" },
+      "26": { nama: "Jersey Streetwear Number 09", link: "https://s.shopee.co.id/Lc6d3k4ZU", kategori: "JERSEY", badge: "badge-kemeja" },
+      "27": { nama: "Jersey Streetwear Number 68", link: "https://s.shopee.co.id/1Vo41HvD7k", kategori: "JERSEY", badge: "badge-kemeja" },
+      "28": { nama: "Jersey Streetwear Number 38", link: "https://s.shopee.co.id/5px3BNbgkD", kategori: "JERSEY", badge: "badge-kemeja" },
+      "29": { nama: "Jersey Streetwear Number 26", link: "https://s.shopee.co.id/zGEk04M2", kategori: "JERSEY", badge: "badge-kemeja" },
+      "30": { nama: "Jersey Streetwear Number 22", link: "https://s.shopee.co.id/1qQuQBnQVm", kategori: "JERSEY", badge: "badge-kemeja" },
+      "31": { nama: "Jersey Streetwear Wanita Number 20", link: "https://s.shopee.co.id/1BBDd5dB3Y", kategori: "JERSEY", badge: "badge-kemeja" },
+      "32": { nama: "Jersey Streetwear Number 60", link: "https://s.shopee.co.id/1g7UEGzoag", kategori: "JERSEY", badge: "badge-kemeja" },
+      "33": { nama: "Tas Ransel Travel Multi-fungsi Waterproof", link: "https://s.shopee.co.id/3qByoRygHn", kategori: "TAS", badge: "badge-kemeja" },
+      "34": { nama: "Ivana GS 22 Sandal Wanita Kekinian", link: "https://s.shopee.co.id/5L0nmol4Gk", kategori: "SANDAL", badge: "badge-kemeja" },
+      "35": { nama: "LEONY Sandal Flat Wanita Tali Gesper Fashion", link: "https://s.shopee.co.id/4AoqOmPVx2", kategori: "SANDAL", badge: "badge-kemeja" },
+      "36": { nama: "Sandal Wanita Teplek Full Busah", link: "https://s.shopee.co.id/5AhNaoPnTX", kategori: "SANDAL", badge: "badge-kemeja" },
+      "37": { nama: "Sandal Wanita Kekinian Tinggi Wedges", link: "https://s.shopee.co.id/801YyFsrh8", kategori: "SANDAL", badge: "badge-kemeja" },
+      "38": { nama: "Lylia Sepatu Mules Wanita Hak 3 Cm", link: "https://s.shopee.co.id/5fdeC6tzI8", kategori: "SEPATU", badge: "badge-kemeja" },
+      "39": { nama: "Jennifer Sepatu Mules Wanita Hak 3 Cm", link: "https://s.shopee.co.id/6VClBmDQqD", kategori: "SEPATU", badge: "badge-kemeja" },
+      "40": { nama: "Sepatu Pantofel Wanita Kasual Formal", link: "https://s.shopee.co.id/7pi8mLS4pn", kategori: "SEPATU", badge: "badge-kemeja" },
+      "41": { nama: "Celana Pria Formal Bahan Premium Black Slimfit", link: "https://s.shopee.co.id/Lc7qjCJT1", kategori: "CELANA", badge: "badge-celana" },
+      "42": { nama: "Celana Pria Chino Premium Panjang 100 Cm Mocca Slimfit", link: "https://s.shopee.co.id/6VClCEFJw1", kategori: "CELANA", badge: "badge-celana" },
+      "43": { nama: "AZEY TPF Oversized Core T-Shirt", link: "https://s.shopee.co.id/7091nJ0zTx", kategori: "KAOS", badge: "badge-kemeja" },
+      "44": { nama: "Sepatu Pantofel Pria Dewasa", link: "https://s.shopee.co.id/AKPTloMawN", kategori: "SEPATU", badge: "badge-kemeja" },
+      "45": { nama: "Tas Wanita Moda Bag", link: "https://s.shopee.co.id/8pafzJvJb5", kategori: "TAS", badge: "badge-kemeja" },
+      "46": { nama: "Baju Atasan Bordir Wanita", link: "https://s.shopee.co.id/9f9njweoeG", kategori: "ATASAN", badge: "badge-kemeja" },
+      "47": { nama: "Anne Flat Shoes Wanita", link: "https://s.shopee.co.id/10rpQJ2c5N", kategori: "SEPATU", badge: "badge-kemeja" },
+      "48": { nama: "Sepatu Sneakers Sports Casual Wanita", link: "https://s.shopee.co.id/4fl7nBZkEr", kategori: "SEPATU", badge: "badge-kemeja" },
+      "49": { nama: "Lyla Linen Dress | Gamis", link: "https://s.shopee.co.id/Lc8dSbNnn", kategori: "DRESS", badge: "badge-kemeja" },
+      "50": { nama: "Comfy Blouse By Mariee", link: "https://s.shopee.co.id/7KlsycwwOz", kategori: "ATASAN", badge: "badge-kemeja" },
+      "51": { nama: "Dress Korea Style By Mariee", link: "https://s.shopee.co.id/qYPEv3b1y", kategori: "DRESS", badge: "badge-kemeja" },
+      "52": { nama: "Cardigan Rhein", link: "https://s.shopee.co.id/BIiRuNMYD", kategori: "SWEATER", badge: "badge-kemeja" },
+      "53": { nama: "Vest Bora Rompi Rajut Korea Loose Motif", link: "https://s.shopee.co.id/8zu6yLkCzq", kategori: "SWEATER", badge: "badge-kemeja" },
+      "54": { nama: "Knit Emira Cardy Premium", link: "https://s.shopee.co.id/2LND2HEDe1", kategori: "SWEATER", badge: "badge-kemeja" },
+      "55": { nama: "Namira Knit Oversize Square", link: "https://s.shopee.co.id/7V5JBtiRyW", kategori: "SWEATER", badge: "badge-kemeja" },
+      "56": { nama: "Turtleneck Knit / Sweater Cable Kerah Tinggi Bahan Premium", link: "https://s.shopee.co.id/4L8HQJoVzZ", kategori: "SWEATER", badge: "badge-kemeja" },
+      "57": { nama: "ATASAN RAJUT V NECK | SWEATER LIDYA | BLOUSE WANITA ORI", link: "https://s.shopee.co.id/7092bUxcSy", kategori: "SWEATER", badge: "badge-kemeja" },
+      "58": { nama: "Starla Cardigan Basic Kancing Gold Tebal Premium", link: "https://s.shopee.co.id/1Vo63auKfd", kategori: "SWEATER", badge: "badge-kemeja" }
+    };
+
+    function buatItemBarang(barang, prefix = "") {
+      const li = document.createElement("li");
+
+      const infoDiv = document.createElement("div");
+      infoDiv.className = "info-produk";
+
+      const a = document.createElement("a");
+      a.href = barang.link;
+      a.target = "_blank";
+      a.textContent = prefix + barang.nama;
+      infoDiv.appendChild(a);
+
+      const badge = document.createElement("div");
+      badge.className = "badge " + barang.badge;
+      badge.textContent = barang.kategori;
+
+      li.appendChild(infoDiv);
+      li.appendChild(badge);
+
+      return li;
+    }
+
+    function cariBarang() {
+      const input = document.getElementById("angkaInput");
+      const value = input.value.trim();
+      const hasil = document.getElementById("hasilPencarian");
+      hasil.innerHTML = "";
+
+      if (value in dataBarang) {
+        const barang = dataBarang[value];
+        window.open(barang.link, '_blank');
+      } else {
+        const li = document.createElement("li");
+        li.textContent = "Produk tidak ditemukan.";
+        hasil.appendChild(li);
+      }
+    }
+
+    function tampilkanSemuaBarang() {
+      const daftar = document.getElementById("daftarBarang");
+      for (const angka in dataBarang) {
+        const barang = dataBarang[angka];
+        const item = buatItemBarang(barang, angka + " - ");
+        daftar.appendChild(item);
+      }
+    }
+
+    tampilkanSemuaBarang();
+  </script>
+
+</body>
+</html>
